@@ -30,6 +30,3 @@ struct Change1View: View {
         }
     }
 }
-
-// SwiftUI previews are used for development purposes in Xcode and require a struct that conforms to the PreviewProvider protocol.
-

@@ -1,9 +1,7 @@
 import SwiftUI
 import SpriteKit
 
-// 定义你的 Scene
 class SkyDivingScene: SKScene {
-    
     private var skydiver: SKShapeNode?
     private var placeButton: SKShapeNode! 
     private var canPlaceSkydiver = false
@@ -27,7 +25,6 @@ class SkyDivingScene: SKScene {
         statusLabel.text = status
     }
 
-    
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
         if let skydiverPosition = skydiver?.position {

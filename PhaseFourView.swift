@@ -18,7 +18,6 @@ class PhaseFourScene: SKScene {
         resetGame() // 重置游戏到初始状态
     }
     
-    
     func resetGame() {
             // 清除云朵和跳伞者
             self.removeAllChildren()
@@ -83,7 +82,6 @@ class PhaseFourScene: SKScene {
         if let skydiverNode = skydiver {
             addChild(skydiverNode)
                        simulateSkydiving(from: position)
-           
         }
     }
 
@@ -170,7 +168,7 @@ class PhaseFourScene: SKScene {
         
         // 开伞动作，根据穿过云层数量决定是否开伞
         let sequence: SKAction
-        if cloudsPassedCount >= 2 {
+        if cloudsPassedCount >= 1 {
             // 如果穿过2个以上的云层，模拟开伞失败，直接进入自由落体
             let freeFallDistance = totalFallDistance - accelerateFallDistance - normalFallDistance
             let freeFallAction = SKAction.moveBy(x: 0, y: -freeFallDistance, duration: 0.5)
@@ -203,7 +201,6 @@ class PhaseFourScene: SKScene {
         skydiver.run(sequence)
     }
 
-    
     func addCloud(at position: CGPoint) {
             // 使用SKSpriteNode加载云朵图片
             let cloud = SKSpriteNode(imageNamed: "cloud")
@@ -233,6 +230,7 @@ struct PhaseFourView: View {
     let cornerRadius: CGFloat = 32.0
     @EnvironmentObject var selection: Selection
     @State private var scene: PhaseFourScene? = nil
+    @State private var resetTrigger = false
 
     var body: some View {
         GeometryReader { geometry in
@@ -252,6 +250,7 @@ struct PhaseFourView: View {
                         )
                         .clipShape(RoundedRectangle(cornerRadius: cornerRadius, style: .continuous))
                         .padding(minPadding)
+                        .id(resetTrigger)
                 }
                 // 条件展示 EndView
                 if selection.value == 8 {
@@ -267,7 +266,7 @@ struct PhaseFourView: View {
         .onChange(of: selection.value) { newValue in
             // 监听selection.value的变化，当游戏需要重新开始时重置场景
             if newValue == 4 { // 假设4是游戏重新开始的状态
-                self.scene = self.setupScene()
+                self.resetGame()
             }
         }
     }
@@ -279,4 +278,9 @@ struct PhaseFourView: View {
         newScene.selection = selection
         return newScene
     }
+    private func resetGame() {
+            self.scene = self.setupScene()
+            // 修改状态变量以触发视图重绘
+            self.resetTrigger.toggle()
+        }
 }

@@ -6,8 +6,6 @@ struct ContentView: View {
     var body: some View {
         ZStack {
             Group{
-                // Main content area, switch based on selection.value
-                // For simplicity, using Text views to represent different phases
                 switch selection.value {
                 case 0:
                     IntroView().environmentObject(selection)
