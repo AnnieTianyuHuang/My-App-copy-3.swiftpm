@@ -4,28 +4,54 @@ struct Change1View: View {
     @EnvironmentObject var selection: Selection
     var body: some View {
         ZStack {
-            Color.black.opacity(0.3).edgesIgnoringSafeArea(.all)
+            Color.black.opacity(0.4)
             VStack(spacing: 20) {
-                Text("Now that we've tackled typical heights, why not aim higher? Experience the thrill of skydiving at 100km, where the sky meets space.")
+                Text("""
+                    CONGRATULATIONS!
+
+                    You've successfully completed a parachute jump. 
+
+                    Did you notice the safety altitude limit in the game? What happens if you go higher? 
+
+                    Let's find out!
+                    """)
+                    .frame(maxWidth: 400)
+                    .multilineTextAlignment(.center) 
+                    .font(.system(size: 20))
                     .foregroundColor(.white)
-                    .font(.headline)
                     .padding()
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 
-                Button("Replay Prev") {
+                
+                Button(action: {
                     selection.value = 1
+                }) {
+                    HStack {
+                        Text("Replay Prev")
+                        Image(systemName: "arrow.counterclockwise.circle.fill") 
+                    }
                 }
-                .foregroundColor(.white)
+                .frame(width: 200)
+                .font(.system(size: 30))
+                .foregroundColor(.black)
                 .padding()
-                .background(Color.gray)
-                .cornerRadius(10)
+                .background(Color.white.opacity(0.6))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 
-                Button("Try Higher") {
+                Button(action: {
                     selection.value = 2
+                }) {
+                    HStack {
+                        Text("Try Higher")
+                        Image(systemName: "arrow.right.circle.fill") 
+                    }
                 }
+                .frame(width: 200)
+                .font(.system(size: 30))
                 .foregroundColor(.white)
                 .padding()
-                .background(Color.blue) // Different background color for distinction
-                .cornerRadius(10)
+                .background(Color.blue)
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
         }
     }

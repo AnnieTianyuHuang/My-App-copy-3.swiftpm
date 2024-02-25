@@ -5,14 +5,18 @@ struct Change3View: View {
     
     var body: some View {
         ZStack {
-            Color.black.opacity(0.3).edgesIgnoringSafeArea(.all)
+            Color.black.opacity(0.4).edgesIgnoringSafeArea(.all)
             VStack(spacing: 20) {
                 Text("Try adding clouds")
                     .font(.title)
-                    .foregroundColor(.blue)
+                    .foregroundColor(.white)
                 Text("Oh, you dived below Safe Altitude (300m): Too close to earth, and there's no chance for parachutes to deploy. Let's try something new! Clouds can make skydiving more challenging and fun. Try placing some in your next jump.")
-                    .foregroundColor(.blue)
-                    .multilineTextAlignment(.center)
+                    .frame(maxWidth: 400)
+                    .multilineTextAlignment(.center) 
+                    .font(.system(size: 20))
+                    .foregroundColor(.white)
+                    .padding()
+                    .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 
                 Button("Replay") {
                     selection.value = 3

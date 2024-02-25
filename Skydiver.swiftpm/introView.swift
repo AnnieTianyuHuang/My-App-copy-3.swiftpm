@@ -63,8 +63,14 @@ struct IntroView: View {
                             .background(Color.black.opacity(0.5))
                             .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                         
-                        Button("Let's go!") {
+                        
+                        Button(action: {
                             selection.value = 1
+                        }) {
+                            HStack {
+                                Text("Let's go")
+                                Image(systemName: "arrow.right.circle.fill") 
+                            }
                         }
                         .font(.system(size: 30))
                         .foregroundColor(.white)
