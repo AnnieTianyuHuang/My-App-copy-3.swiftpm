@@ -3,14 +3,20 @@ import SwiftUI
 
 class PhaseFourScene: SKScene {
     private var skydiver: SKShapeNode?
-    private var cloudButton: SKSpriteNode?
-    private var stopAddingButton: SKSpriteNode?
-    private var placeSkydiverButton: SKSpriteNode?
+    private var cloudButton: SKShapeNode?
+    private var stopAddingButton: SKShapeNode?
+    private var placeSkydiverButton: SKShapeNode?
     private var isAddingClouds = false
     private var canPlaceSkydiver = false
     private var gameEnded = false
     var selection: Selection?
     
+    private var placeButton: SKShapeNode! 
+    var backgroundImage = SKSpriteNode(imageNamed: "simulator")
+    private var statusBubble: SKSpriteNode!
+    private var statusLabel: SKLabelNode!
+    
+    let topBoundary: CGFloat = 20 
     let bottomBoundary: CGFloat = 50 
 
     override func didMove(to view: SKView) {
@@ -19,55 +25,125 @@ class PhaseFourScene: SKScene {
     }
     
     func resetGame() {
-            // 清除云朵和跳伞者
-            self.removeAllChildren()
-            self.isAddingClouds = false
-            self.canPlaceSkydiver = false
-            self.gameEnded = false
-            setupCloudButton()
+        // 清除云朵和跳伞者
+        self.removeAllChildren()
+        self.isAddingClouds = false
+        self.canPlaceSkydiver = false
+        self.gameEnded = false
+        setBackgroundImage(name: "simulator")
+        setupCloudButton()
         print("resetted")
     }
 
+    private func setBackgroundImage(name: String) {
+        // Remove old background image if exists
+        backgroundImage.removeFromParent()
+        
+        // Set new background image
+        backgroundImage = SKSpriteNode(imageNamed: name)
+        backgroundImage.position = CGPoint(x: size.width / 2, y: size.height / 2 + 5)
+        backgroundImage.zPosition = -1 // Ensure it's behind everything
+        backgroundImage.setScale(1.0/3.0) // Scale down to desired size
+        addChild(backgroundImage)
+    }
+
     private func setupCloudButton() {
-        cloudButton = SKSpriteNode(color: .blue, size: CGSize(width: 200, height: 50))
-        guard let cloudButton = cloudButton else { return }
-        cloudButton.position = CGPoint(x: self.frame.midX, y: self.frame.midY)
-        cloudButton.name = "addCloud"
-
-        let label = SKLabelNode(text: "Click to Add Cloud")
-        label.fontColor = .white
-        label.fontSize = 20
-        cloudButton.addChild(label)
-
-        self.addChild(cloudButton)
+        let buttonSize = CGSize(width: 630, height: 110)
+        let cornerRadius: CGFloat = 100
+        let backgroundColor = SKColor.black.withAlphaComponent(0.3)
+        let buttonRect = CGRect(origin: CGPoint(x: -buttonSize.width / 2, y: -buttonSize.height / 2), size: buttonSize)
+        let buttonPath = UIBezierPath(roundedRect: buttonRect, cornerRadius: cornerRadius)
+        cloudButton = SKShapeNode(path: buttonPath.cgPath)
+        cloudButton!.fillColor = backgroundColor
+        cloudButton!.name = "addCloud"
+        cloudButton?.position = CGPoint(x: frame.midX, y: frame.midY)
+        
+        let label = SKLabelNode()
+        label.text = "Tap to add clould"
+        label.fontSize = 64
+        label.fontColor = SKColor.white
+        label.verticalAlignmentMode = .center
+        label.horizontalAlignmentMode = .center
+        label.position = CGPoint(x: 0, y: 0)
+        
+        // Create attributed string with desired font weight
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: label.fontSize, weight: .light),
+            .foregroundColor: SKColor.white
+        ]
+        let attributedText = NSAttributedString(string: "Tap to add clould", attributes: attributes)
+        
+        // Apply attributed string to label
+        label.attributedText = attributedText
+        
+        cloudButton!.addChild(label)
+        addChild(cloudButton!)
     }
 
     private func setupStopAddingButton() {
-        stopAddingButton = SKSpriteNode(color: .red, size: CGSize(width: 200, height: 50))
-        guard let stopAddingButton = stopAddingButton else { return }
-        stopAddingButton.position = CGPoint(x: self.frame.maxX - 120, y: self.frame.maxY - 60)
-        stopAddingButton.name = "stopAdding"
+        let buttonSize = CGSize(width: 270, height: 60)
+        let cornerRadius: CGFloat = 100
+        let backgroundColor = SKColor.red.withAlphaComponent(0.6)
+        let buttonRect = CGRect(origin: CGPoint(x: -buttonSize.width / 2, y: -buttonSize.height / 2), size: buttonSize)
+        let buttonPath = UIBezierPath(roundedRect: buttonRect, cornerRadius: cornerRadius)
+        stopAddingButton = SKShapeNode(path: buttonPath.cgPath)
+        stopAddingButton!.fillColor = backgroundColor
+        stopAddingButton!.position = CGPoint(x: self.frame.maxX - 220, y: self.frame.maxY - 90)
+        stopAddingButton!.name = "stopAdding"
 
-        let label = SKLabelNode(text: "Stop Adding")
-        label.fontColor = .white
-        label.fontSize = 20
-        stopAddingButton.addChild(label)
-
-        self.addChild(stopAddingButton)
+        let label = SKLabelNode()
+        label.text = "Stop Adding"
+        label.fontSize = 38
+        label.fontColor = SKColor.white
+        label.verticalAlignmentMode = .center
+        label.horizontalAlignmentMode = .center
+        label.position = CGPoint(x: 0, y: 0)
+        
+        // Create attributed string with desired font weight
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: label.fontSize, weight: .light),
+            .foregroundColor: SKColor.white
+        ]
+        let attributedText = NSAttributedString(string: "Finished Adding", attributes: attributes)
+        
+        // Apply attributed string to label
+        label.attributedText = attributedText
+        
+        stopAddingButton!.addChild(label)
+        addChild(stopAddingButton!)
     }
 
     private func setupPlaceSkydiverButton() {
-        placeSkydiverButton = SKSpriteNode(color: .green, size: CGSize(width: 200, height: 50))
-        guard let placeSkydiverButton = placeSkydiverButton else { return }
-        placeSkydiverButton.position = CGPoint(x: self.frame.midX, y: self.frame.midY - 100)
-        placeSkydiverButton.name = "placeSkydiver"
-
-        let label = SKLabelNode(text: "Click to Place Skydiver")
-        label.fontColor = .white
-        label.fontSize = 20
-        placeSkydiverButton.addChild(label)
-
-        self.addChild(placeSkydiverButton)
+        let buttonSize = CGSize(width: 720, height: 110)
+        let cornerRadius: CGFloat = 100
+        let backgroundColor = SKColor.black.withAlphaComponent(0.3)
+        let buttonRect = CGRect(origin: CGPoint(x: -buttonSize.width / 2, y: -buttonSize.height / 2), size: buttonSize)
+        let buttonPath = UIBezierPath(roundedRect: buttonRect, cornerRadius: cornerRadius)
+        placeSkydiverButton = SKShapeNode(path: buttonPath.cgPath)
+        placeSkydiverButton!.fillColor = backgroundColor
+        placeSkydiverButton!.name = "placeSkydiver"
+        placeSkydiverButton?.position = CGPoint(x: frame.midX, y: frame.midY)
+        
+        let label = SKLabelNode()
+        label.text = "Click to Place Skydiver"
+        label.fontSize = 64
+        label.fontColor = SKColor.white
+        label.verticalAlignmentMode = .center
+        label.horizontalAlignmentMode = .center
+        label.position = CGPoint(x: 0, y: 0)
+        
+        // Create attributed string with desired font weight
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: label.fontSize, weight: .light),
+            .foregroundColor: SKColor.white
+        ]
+        let attributedText = NSAttributedString(string: "Click to Place Skydiver", attributes: attributes)
+        
+        // Apply attributed string to label
+        label.attributedText = attributedText
+        
+        placeSkydiverButton!.addChild(label)
+        addChild(placeSkydiverButton!)
     }
     
     func addSkydiver(at position: CGPoint) {

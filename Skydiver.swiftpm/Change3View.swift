@@ -18,23 +18,36 @@ struct Change3View: View {
                     .padding()
                     .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
                 
-                Button("Replay") {
+                Button(action: {
                     selection.value = 3
+                }) {
+                    HStack {
+                        Text("Replay Prev")
+                        Image(systemName: "arrow.counterclockwise.circle.fill") 
+                    }
                 }
+                .frame(width: 200)
+                .font(.system(size: 30))
+                .foregroundColor(.black)
+                .padding()
+                .background(Color.white.opacity(0.6))
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
+                
+                Button(action: {
+                    selection.value = 4
+                }) {
+                    HStack {
+                        Text("Place Cloud")
+                        Image(systemName: "arrow.right.circle.fill") 
+                    }
+                }
+                .frame(width: 200)
+                .font(.system(size: 30))
                 .foregroundColor(.white)
                 .padding()
                 .background(Color.blue)
-                .cornerRadius(10)
-                
-                Button("Place Cloud") {  // 新增的按钮
-                    selection.value = 4
-                }
-                .foregroundColor(.white)
-                .padding()
-                .background(Color.green)  // 为了区分，使用不同的颜色
-                .cornerRadius(10)
+                .clipShape(RoundedRectangle(cornerRadius: 18, style: .continuous))
             }
-            .padding()
         }
     }
 }

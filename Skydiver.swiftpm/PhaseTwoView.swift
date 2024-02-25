@@ -4,29 +4,111 @@ import SpriteKit
 // PhaseTwoScene 类
 class PhaseTwoScene: SKScene {
     private var skydiver: SKShapeNode?
-    private var placeButton: SKSpriteNode!
+    private var placeButton: SKShapeNode! 
     private var canPlaceSkydiver = false
     private var gameEnded = false
     var selection: Selection?
+    var backgroundImage = SKSpriteNode(imageNamed: "simulator_top_enabled")
+    private var statusBubble: SKSpriteNode!
+    private var statusLabel: SKLabelNode!
+    let topBoundary: CGFloat = 20 
+    let bottomBoundary: CGFloat = 50 
 
     override func didMove(to view: SKView) {
-        backgroundColor = .white
+        setBackgroundImage(name: "simulator_top_enabled")
         setupPlaceButton()
-        addGreyOutZones()
+//        addGreyOutZones()
         gameEnded = false
     }
+    
+    private func addSkydiver(at position: CGPoint) {
+        guard position.y > bottomBoundary && position.y < size.height - topBoundary else { return }
+        
+        skydiver?.removeFromParent()
+        
+        skydiver = SKShapeNode(circleOfRadius: 10)
+        skydiver?.fillColor = SKColor.blue
+        skydiver?.alpha = 0
+        skydiver?.position = position
+        skydiver?.name = "skydiver"
+        
+        if let skydiverNode = skydiver {
+            addChild(skydiverNode)
+            flyChaotically(from: position)
+        }
+        
+        // 创建并设置气泡窗节点
+        statusBubble = SKSpriteNode(imageNamed: "bubbleImage")
+        statusBubble.position = CGPoint(x: self.size.width - 150, y: self.size.height - 100) // 示例位置
+        self.addChild(statusBubble)
+        
+        // 创建并设置状态标签
+        statusLabel = SKLabelNode(fontNamed: "Arial")
+        statusLabel.fontSize = 20
+        statusLabel.fontColor = SKColor.black
+        statusLabel.position = CGPoint(x: 0, y: -80) // 相对于气泡窗的位置
+        statusBubble.addChild(statusLabel)
+        
+        // 示例：更新状态文本
+        updateStatus("Falling")
+    }
+    
+    func updateStatus(_ status: String) {
+        // 更新状态标签的文本
+        statusLabel.text = status
+        
+        // 更新statusBubble纹理，播放对应状态的动画
+        let textures = [SKTexture(imageNamed: "\(status)1"),
+                        SKTexture(imageNamed: "\(status)2"),
+                        SKTexture(imageNamed: "\(status)3")]
+        let animationAction = SKAction.animate(with: textures, timePerFrame: 0.3)
+        let repeatAction = SKAction.repeatForever(animationAction)
+        statusBubble.run(repeatAction)
+    }
 
-    private func setupPlaceButton() {
-        placeButton = SKSpriteNode(color: .cyan, size: CGSize(width: 150, height: 40))
-        placeButton.position = CGPoint(x: frame.midX, y: frame.maxY - 60) // 放置在顶部区域
+    
+    private func setBackgroundImage(name: String) {
+        // Remove old background image if exists
+        backgroundImage.removeFromParent()
+        
+        // Set new background image
+        backgroundImage = SKSpriteNode(imageNamed: name)
+        backgroundImage.position = CGPoint(x: size.width / 2, y: size.height / 2 + 5)
+        backgroundImage.zPosition = -1 // Ensure it's behind everything
+        backgroundImage.setScale(1.0/3.0) // Scale down to desired size
+        addChild(backgroundImage)
+    }
+
+    private func setupPlaceButton() {        
+        let buttonSize = CGSize(width: 630, height: 110)
+        let cornerRadius: CGFloat = 100
+        let backgroundColor = SKColor.black.withAlphaComponent(0.3)
+        let buttonRect = CGRect(origin: CGPoint(x: -buttonSize.width / 2, y: -buttonSize.height / 2), size: buttonSize)
+        let buttonPath = UIBezierPath(roundedRect: buttonRect, cornerRadius: cornerRadius)
+        placeButton = SKShapeNode(path: buttonPath.cgPath)
+        placeButton.fillColor = backgroundColor
+        placeButton.position = CGPoint(x: frame.midX, y: frame.maxY - 150)
         placeButton.name = "placeButton"
-
-        let label = SKLabelNode(text: "Tap to Place Skydiver")
-        label.fontSize = 24
-        label.fontColor = SKColor.black
-        label.position = CGPoint.zero
+        
+        let label = SKLabelNode()
+        label.text = "Tap to Place Skydiver"
+        label.fontSize = 64
+        label.fontColor = SKColor.white
+        label.verticalAlignmentMode = .center
+        label.horizontalAlignmentMode = .center
+        label.position = CGPoint(x: 0, y: 0)
+        
+        // Create attributed string with desired font weight
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: label.fontSize, weight: .light),
+            .foregroundColor: SKColor.white
+        ]
+        let attributedText = NSAttributedString(string: "Tap to Place Skydiver", attributes: attributes)
+        
+        // Apply attributed string to label
+        label.attributedText = attributedText
+        
         placeButton.addChild(label)
-
         addChild(placeButton)
     }
 
@@ -45,7 +127,6 @@ class PhaseTwoScene: SKScene {
         addChild(greyZone)
     }
 
-
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         guard let touch = touches.first else { return }
         let location = touch.location(in: self)
@@ -62,20 +143,6 @@ class PhaseTwoScene: SKScene {
             if location.y > topAllowedZoneHeight {
                 addSkydiver(at: location)
             }
-        }
-    }
-
-    private func addSkydiver(at position: CGPoint) {
-        skydiver?.removeFromParent()
-
-        skydiver = SKShapeNode(circleOfRadius: 10)
-        skydiver?.fillColor = SKColor.blue
-        skydiver?.position = position
-        skydiver?.name = "skydiver"
-
-        if let skydiverNode = skydiver {
-            addChild(skydiverNode)
-            flyChaotically(from: position)
         }
     }
 

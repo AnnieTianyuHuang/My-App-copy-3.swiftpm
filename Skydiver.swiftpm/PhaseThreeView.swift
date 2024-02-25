@@ -4,31 +4,63 @@ import SpriteKit
 // PhaseThreeScene 类
 class PhaseThreeScene: SKScene {
     private var skydiver: SKShapeNode?
-    private var placeButton: SKSpriteNode!
+    private var placeButton: SKShapeNode!
     private var canPlaceSkydiver = false
     private var gameEnded = false
     var selection: Selection?
+    var backgroundImage = SKSpriteNode(imageNamed: "simulator_bottom_enabled")
+
 
     override func didMove(to view: SKView) {
-        self.backgroundColor = .white
-        self.scaleMode = .resizeFill
+        setBackgroundImage(name: "simulator_bottom_enabled")
         setupPlaceButton()
-        addGreyOutZones()
+//        addGreyOutZones()
+    }
+    
+    private func setBackgroundImage(name: String) {
+        // Remove old background image if exists
+        backgroundImage.removeFromParent()
+        
+        // Set new background image
+        backgroundImage = SKSpriteNode(imageNamed: name)
+        backgroundImage.position = CGPoint(x: size.width / 2, y: size.height / 2 + 5)
+        backgroundImage.zPosition = -1 // Ensure it's behind everything
+        backgroundImage.setScale(1.0/3.0) // Scale down to desired size
+        addChild(backgroundImage)
     }
 
+
     private func setupPlaceButton() {
-        // 初始化放置按钮
-        placeButton = SKSpriteNode(color: .cyan, size: CGSize(width: 150, height: 40))
-        placeButton.position = CGPoint(x: self.frame.midX, y: self.frame.minY + 60) // 放置在底部区域
+        let buttonSize = CGSize(width: 630, height: 110)
+        let cornerRadius: CGFloat = 100
+        let backgroundColor = SKColor.black.withAlphaComponent(0.3)
+        let buttonRect = CGRect(origin: CGPoint(x: -buttonSize.width / 2, y: -buttonSize.height / 2), size: buttonSize)
+        let buttonPath = UIBezierPath(roundedRect: buttonRect, cornerRadius: cornerRadius)
+        placeButton = SKShapeNode(path: buttonPath.cgPath)
+        placeButton.fillColor = backgroundColor
+        placeButton.position = CGPoint(x: frame.midX, y: frame.minY + 250)
         placeButton.name = "placeButton"
-
-        let label = SKLabelNode(text: "Tap to Place Skydiver")
-        label.fontSize = 20
-        label.fontColor = SKColor.black
-        label.position = CGPoint.zero
+        
+        let label = SKLabelNode()
+        label.text = "Tap to Place Skydiver"
+        label.fontSize = 64
+        label.fontColor = SKColor.white
+        label.verticalAlignmentMode = .center
+        label.horizontalAlignmentMode = .center
+        label.position = CGPoint(x: 0, y: 0)
+        
+        // Create attributed string with desired font weight
+        let attributes: [NSAttributedString.Key: Any] = [
+            .font: UIFont.systemFont(ofSize: label.fontSize, weight: .light),
+            .foregroundColor: SKColor.white
+        ]
+        let attributedText = NSAttributedString(string: "Tap to Place Skydiver", attributes: attributes)
+        
+        // Apply attributed string to label
+        label.attributedText = attributedText
+        
         placeButton.addChild(label)
-
-        self.addChild(placeButton)
+        addChild(placeButton)
     }
 
     func addGreyOutZones() {
